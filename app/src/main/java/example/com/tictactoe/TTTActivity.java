@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -39,6 +40,13 @@ public class TTTActivity extends AppCompatActivity {
     Button mConnectButton = null;
     EditText mNameEditText = null;
 
+    //Game details
+    String playerName;
+    String playerLetter = "O";
+    int playerNum = 2;
+    int playerColor = Color.BLUE;
+    int numMoves;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +70,7 @@ public class TTTActivity extends AppCompatActivity {
         hideLoginControls();
 
         // make the mBoard non-clickable
-        disableBoardClick();
+        enableBoardClick();
 
         // hide the mBoard
         hideBoard();
@@ -78,7 +86,31 @@ public class TTTActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Invalid name", Toast.LENGTH_SHORT).show();
                 }
                 else {
+                    playerName = name;
                     send("NAME," + mNameEditText.getText());
+                    send("LIST,USERS");
+                    try {
+                        while (mConnected) {
+                            String nameList = mIn.readLine();
+                            if (nameList == null) { // other side closed the connection
+                                break;
+                            }
+                            if (nameList.endsWith(playerName)) {
+                                playerNum = 2;
+                                playerLetter = "O";
+                                playerColor = Color.BLUE;
+                            }
+                            else {
+                                playerNum = 1;
+                                playerLetter = "X";
+                                playerColor = Color.RED;
+                            }
+                        }
+                    } catch (UnknownHostException e1) {
+                        Log.i(TAG, "UnknownHostException mIn receive task");
+                    } catch (IOException e1) {
+                        Log.i(TAG, "IOException mIn receive task");
+                    }
                 }
             }
         });
@@ -93,17 +125,76 @@ public class TTTActivity extends AppCompatActivity {
                     case R.id.b00:
                         x = 0;
                         y = 0;
-
-                        // TODO: what do we do if the user clicked field (0,0)?
+                        if (mBoard[0][0].getText().equals("")) {
+                            mBoard[0][0].setText(playerLetter);
+                            mBoard[0][0].setTextColor(playerColor);
+                        }
                         break;
                     case R.id.b01:
                         x = 0;
-                        y = 1;
-
-                        // TODO: what do we do if the user clicked field (0,1)?
+                        y = 0;
+                        if (mBoard[0][1].getText().equals("")) {
+                            mBoard[0][1].setText(playerLetter);
+                            mBoard[0][1].setTextColor(playerColor);
+                        }
+                        break;
+                    case R.id.b02:
+                        x = 0;
+                        y = 0;
+                        if (mBoard[0][2].getText().equals("")) {
+                            mBoard[0][2].setText(playerLetter);
+                            mBoard[0][2].setTextColor(playerColor);
+                        }
+                        break;
+                    case R.id.b10:
+                        x = 0;
+                        y = 0;
+                        if (mBoard[1][0].getText().equals("")) {
+                            mBoard[1][0].setText(playerLetter);
+                            mBoard[1][0].setTextColor(playerColor);
+                        }
+                        break;
+                    case R.id.b11:
+                        x = 0;
+                        y = 0;
+                        if (mBoard[1][1].getText().equals("")) {
+                            mBoard[1][1].setText(playerLetter);
+                            mBoard[1][1].setTextColor(playerColor);
+                        }
+                        break;
+                    case R.id.b12:
+                        x = 0;
+                        y = 0;
+                        if (mBoard[1][2].getText().equals("")) {
+                            mBoard[1][2].setText(playerLetter);
+                            mBoard[1][2].setTextColor(playerColor);
+                        }
+                        break;
+                    case R.id.b20:
+                        x = 0;
+                        y = 0;
+                        if (mBoard[2][0].getText().equals("")) {
+                            mBoard[2][0].setText(playerLetter);
+                            mBoard[2][0].setTextColor(playerColor);
+                        }
+                        break;
+                    case R.id.b21:
+                        x = 0;
+                        y = 0;
+                        if (mBoard[2][1].getText().equals("")) {
+                            mBoard[2][1].setText(playerLetter);
+                            mBoard[2][1].setTextColor(playerColor);
+                        }
+                        break;
+                    case R.id.b22:
+                        x = 0;
+                        y = 0;
+                        if (mBoard[2][2].getText().equals("")) {
+                            mBoard[2][2].setText(playerLetter);
+                            mBoard[2][2].setTextColor(playerColor);
+                        }
                         break;
 
-                    // [ ... and so on for the other buttons ]
 
                     default:
                         break;
@@ -418,5 +509,82 @@ public class TTTActivity extends AppCompatActivity {
                 mBoard[x][y].setEnabled(false);
             }
         }
+    }
+
+    /*
+     * Check if anyone has won
+     * 0 for no one
+     * 1 for player 1
+     * 2 for player 2
+     * 3 for cat game
+     */
+    int checkForEnd() {
+        int x, y;
+        int xCount = 0;
+        int oCount = 0;
+        //Checks for column wins
+        for (x = 0; x < 3; x++) {
+            for (y = 0; y < 3; y++) {
+                if (mBoard[x][y].getText().equals("X"))
+                    xCount++;
+                if (mBoard[x][y].getText().equals("O"))
+                    oCount++;
+                if (xCount == 3)
+                    return 1;
+                if (oCount == 3)
+                    return 2;
+            }
+            xCount = 0;
+            oCount = 0;
+        }
+        //Checks for row wins
+        for (y = 0; y < 3; y++) {
+            for (x = 0; x < 3; x++) {
+                if (mBoard[x][y].getText().equals("X"))
+                    xCount++;
+                if (mBoard[x][y].getText().equals("O"))
+                    oCount++;
+                if (xCount == 3)
+                    return 1;
+                if (oCount == 3)
+                    return 2;
+            }
+            xCount = 0;
+            oCount = 0;
+        }
+        //Checks for diagonal wins
+        y = 0;
+        for (x = 0; x < 3; x++) {
+            if (mBoard[x][y].getText().equals("X"))
+                xCount++;
+            if (mBoard[x][y].getText().equals("O"))
+                oCount++;
+            if (xCount == 3)
+                return 1;
+            if (oCount == 3)
+                return 2;
+            y++;
+        }
+        y = 0;
+        for (x = 2; x >= 0; x--) {
+            if (mBoard[x][y].getText().equals("X"))
+                xCount++;
+            if (mBoard[x][y].getText().equals("O"))
+                oCount++;
+            if (xCount == 3)
+                return 1;
+            if (oCount == 3)
+                return 2;
+            y++;
+        }
+        //Check for cat game
+        if (playerNum == 1 && numMoves == 5) {
+            return 3;
+        }
+        if (playerNum == 2 && numMoves == 4) {
+            return 3;
+        }
+        //Game hasn't ended yet
+        return 0;
     }
 }

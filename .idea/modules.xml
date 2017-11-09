@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/tic-tac-toe-android.iml" filepath="$PROJECT_DIR$/tic-tac-toe-android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tic-tac-toe-android-coopervgarrison.iml" filepath="$PROJECT_DIR$/tic-tac-toe-android-coopervgarrison.iml" />
     </modules>
   </component>
 </project>
