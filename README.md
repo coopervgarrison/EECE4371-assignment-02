@@ -6,9 +6,9 @@ The client connects to the server and enters a name to join the group on the ser
 
 The client requests the information of others in the group from the server.
 
-  If there are no other users, the client waits until it is challenged to a game and then accepts.
+    If there are no other users, the client waits until it is challenged to a game and then accepts.
   
-  If there are other users, the client challenges the first user it finds to a game.
+    If there are other users, the client challenges the first user it finds to a game.
   
 There are now two users engaged in a game on the server and the client has 2 main responsibilities:
 
